@@ -1,0 +1,88 @@
+.registration-page {
+    background:
+      radial-gradient(
+        circle at 18% 20%,
+        rgba(104, 74, 255, 0.2),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at 82% 76%,
+        rgba(32, 202, 255, 0.14),
+        transparent 32%
+      ),
+      linear-gradient(
+        145deg,
+        #070814 0%,
+        #0d0b20 48%,
+        #07131d 100%
+      );
+  }
+  
+  .registration-page::before {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    opacity: 0.2;
+    background-image:
+      linear-gradient(
+        rgba(255, 255, 255, 0.045) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.045) 1px,
+        transparent 1px
+      );
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(
+      ellipse at center,
+      #000000,
+      transparent 78%
+    );
+    mask-image: radial-gradient(
+      ellipse at center,
+      #000000,
+      transparent 78%
+    );
+  }
+  
+  .registration-glow {
+    position: absolute;
+    width: 24rem;
+    height: 24rem;
+    pointer-events: none;
+    border-radius: 999px;
+    filter: blur(100px);
+    opacity: 0.2;
+    animation: registration-glow 12s ease-in-out infinite alternate;
+  }
+  
+  .registration-glow-one {
+    top: -10rem;
+    left: -8rem;
+    background: #7c5cff;
+  }
+  
+  .registration-glow-two {
+    right: -10rem;
+    bottom: -12rem;
+    background: #35cfff;
+    animation-delay: -5s;
+  }
+  
+  @keyframes registration-glow {
+    from {
+      transform: translate3d(0, 0, 0) scale(0.9);
+    }
+  
+    to {
+      transform: translate3d(2rem, 1rem, 0) scale(1.1);
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .registration-glow {
+      animation: none;
+    }
+  }

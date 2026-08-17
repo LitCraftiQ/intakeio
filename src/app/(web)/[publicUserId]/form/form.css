@@ -1,0 +1,164 @@
+@theme inline {
+  --font-display: var(--font-instrument), "Instrument Serif", ui-serif, Georgia, serif;
+  --animate-float-slow: float-slow 14s ease-in-out infinite;
+  --animate-float-slower: float-slower 22s ease-in-out infinite;
+  --animate-drift: drift 40s linear infinite;
+  --animate-twinkle: twinkle 4s ease-in-out infinite;
+  --animate-orb-rotate: orb-rotate 60s linear infinite;
+  --animate-gradient-shift: gradient-shift 18s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.intake-form-page {
+  --radius: 0.9rem;
+
+  --background: oklch(0.16 0.05 275);
+  --foreground: oklch(0.98 0.005 250);
+
+  --card: oklch(0.22 0.04 275 / 0.55);
+  --card-foreground: oklch(0.98 0.005 250);
+
+  --popover: oklch(0.2 0.045 275);
+  --popover-foreground: oklch(0.98 0.005 250);
+
+  --primary: oklch(0.72 0.16 265);
+  --primary-foreground: oklch(0.12 0.03 275);
+
+  --secondary: oklch(0.28 0.04 275 / 0.6);
+  --secondary-foreground: oklch(0.98 0.005 250);
+
+  --muted: oklch(0.28 0.03 275 / 0.5);
+  --muted-foreground: oklch(0.74 0.035 235);
+  --color-muted-foreground: oklch(0.74 0.035 235);
+
+  --accent: oklch(0.7 0.14 220);
+  --accent-foreground: oklch(0.12 0.03 275);
+
+  --destructive: oklch(0.68 0.2 22);
+  --destructive-foreground: oklch(0.98 0.005 250);
+
+  --border: oklch(0.98 0.01 250 / 0.1);
+  --input: oklch(0.98 0.01 250 / 0.08);
+  --ring: oklch(0.72 0.16 265);
+
+  --font-display: var(--font-instrument), "Instrument Serif", ui-serif, Georgia, serif;
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  color: var(--foreground);
+  font-family:
+    var(--font-intake-sans),
+    "Inter",
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background:
+    radial-gradient(1200px 800px at 10% 0%, oklch(0.52 0.14 255 / 0.55), transparent 60%),
+    radial-gradient(1000px 700px at 90% 20%, oklch(0.56 0.12 230 / 0.48), transparent 60%),
+    radial-gradient(900px 700px at 50% 100%, oklch(0.5 0.12 270 / 0.42), transparent 60%),
+    linear-gradient(180deg, oklch(0.38 0.09 255), oklch(0.34 0.08 265) 55%, oklch(0.36 0.09 250));
+  background-attachment: fixed;
+}
+
+.intake-form-page * {
+  border-color: var(--border);
+}
+
+.intake-form-page ::selection {
+  background: oklch(0.72 0.16 265 / 0.4);
+  color: white;
+}
+
+.intake-form-page img {
+  display: block;
+  max-width: 100%;
+}
+
+.intake-form-page input::placeholder,
+.intake-form-page textarea::placeholder {
+  color: oklch(0.74 0.035 235);
+  opacity: 1;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -30px, 0) rotate(4deg); }
+}
+@keyframes float-slower {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(20px, -40px, 0) rotate(-5deg); }
+}
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-100px, -200px, 0); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.9); }
+  50% { opacity: 0.9; transform: scale(1.15); }
+}
+@keyframes orb-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@utility glass-card {
+  background: linear-gradient(
+    150deg,
+    oklch(0.4 0.06 265 / 0.38) 0%,
+    oklch(0.26 0.05 275 / 0.42) 50%,
+    oklch(0.34 0.06 255 / 0.36) 100%
+  );
+  border: 1px solid oklch(1 0 0 / 0.16);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  box-shadow:
+    0 1px 0 0 oklch(1 0 0 / 0.12) inset,
+    0 24px 60px -24px oklch(0.12 0.08 275 / 0.5);
+}
+
+@utility glass-input {
+  background: oklch(1 0 0 / 0.08);
+  border: 1px solid oklch(1 0 0 / 0.16);
+  transition: all 0.2s ease;
+}
+
+@utility glass-input-focus {
+  background: oklch(1 0 0 / 0.08);
+  border-color: oklch(0.72 0.16 265 / 0.6);
+  box-shadow: 0 0 0 4px oklch(0.72 0.16 265 / 0.12);
+}
+
+.intake-form-page .glass-card {
+  background: linear-gradient(
+    150deg,
+    oklch(0.4 0.06 265 / 0.38) 0%,
+    oklch(0.26 0.05 275 / 0.42) 50%,
+    oklch(0.34 0.06 255 / 0.36) 100%
+  );
+  border: 1px solid oklch(1 0 0 / 0.16);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  box-shadow:
+    0 1px 0 0 oklch(1 0 0 / 0.12) inset,
+    0 24px 60px -24px oklch(0.12 0.08 275 / 0.5);
+}
+
+.intake-form-page .glass-input {
+  background: oklch(1 0 0 / 0.08);
+  border: 1px solid oklch(1 0 0 / 0.16);
+}
