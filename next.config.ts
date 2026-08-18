@@ -8,13 +8,35 @@ const securityHeaders = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
 ];
 
+function hostFromUrl(value: string | undefined) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    return new URL(
+      value.includes("://") ? value : `https://${value}`,
+    ).host;
+  } catch {
+    return null;
+  }
+}
+
+const allowedOrigins = Array.from(
+  new Set(
+    [
+      "localhost:4001",
+      hostFromUrl(process.env.APP_URL),
+      hostFromUrl(process.env.VERCEL_URL),
+      hostFromUrl(process.env.VERCEL_PROJECT_PRODUCTION_URL),
+    ].filter((value): value is string => Boolean(value)),
+  ),
+);
+
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
-      allowedOrigins: [
-        "localhost:4001",
-        "pc2rkjlx-4001.uks1.devtunnels.ms",
-      ],
+      allowedOrigins,
     },
   },
 
