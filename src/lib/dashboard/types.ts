@@ -42,6 +42,7 @@ export const contactStatuses = [
 
   export const dashboardNotificationTypes = [
     "share_page_opened",
+    "contact_submitted",
   ] as const;
 
   export type DashboardNotificationType =

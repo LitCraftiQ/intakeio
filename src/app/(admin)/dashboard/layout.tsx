@@ -82,6 +82,7 @@ import {
         <DashboardShell
           displayName={displayName}
           email={email}
+          ownerUserId={user.id}
           formPublicOwnerId={
             formPublicOwnerId
           }

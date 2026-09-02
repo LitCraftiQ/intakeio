@@ -5,37 +5,141 @@ export function resolveFormLeaveHref(input: {
   publishedSharePath: string | null;
   appUrl: string;
 }) {
-  const fromPath = toSafeLeavePath(
+  const formPath =
+    `/${input.publicOwnerId}/form`;
+
+  const fromPath = toSafeSameOriginPath(
     input.fromQuery,
     input.appUrl,
-    input.publicOwnerId,
+    formPath,
   );
 
   if (fromPath) {
     return fromPath;
   }
 
-  const refererPath = toSafeLeavePath(
+  const refererTarget = toSafeLeaveTarget(
     input.referer,
     input.appUrl,
-    input.publicOwnerId,
+    formPath,
   );
 
-  if (refererPath) {
-    return refererPath;
+  if (refererTarget) {
+    return refererTarget;
   }
 
-  if (input.publishedSharePath) {
+  if (
+    input.publishedSharePath &&
+    !isFormPath(
+      input.publishedSharePath,
+      formPath,
+    )
+  ) {
     return input.publishedSharePath;
   }
 
-  return "/";
+  return null;
 }
 
-function toSafeLeavePath(
+export function resolveCloseDestination(input: {
+  leaveHref: string | null;
+  referrer: string;
+  publicOwnerId: string;
+  appOrigin: string;
+}) {
+  const formPath =
+    `/${input.publicOwnerId}/form`;
+
+  if (
+    input.leaveHref &&
+    isAllowedLeaveTarget(
+      input.leaveHref,
+      formPath,
+      input.appOrigin,
+    )
+  ) {
+    return input.leaveHref;
+  }
+
+  const referrerTarget = toSafeLeaveTarget(
+    input.referrer,
+    input.appOrigin,
+    formPath,
+  );
+
+  if (referrerTarget) {
+    return referrerTarget;
+  }
+
+  return null;
+}
+
+function isFormPath(
+  pathname: string,
+  formPath: string,
+) {
+  return (
+    pathname === formPath ||
+    pathname.startsWith(`${formPath}/`)
+  );
+}
+
+function isAllowedLeaveTarget(
+  value: string,
+  formPath: string,
+  appUrl: string,
+) {
+  return Boolean(
+    toSafeLeaveTarget(
+      value,
+      appUrl,
+      formPath,
+    ),
+  );
+}
+
+function toSafeSameOriginPath(
   value: string | null,
   appUrl: string,
-  publicOwnerId: string,
+  formPath: string,
+) {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+
+  if (
+    !trimmed ||
+    trimmed.startsWith("//")
+  ) {
+    return null;
+  }
+
+  if (!trimmed.startsWith("/")) {
+    return null;
+  }
+
+  try {
+    const parsed = new URL(
+      trimmed,
+      "https://intakeio.invalid",
+    );
+
+    if (isFormPath(parsed.pathname, formPath)) {
+      return null;
+    }
+
+    return `${parsed.pathname}${parsed.search}`;
+  } catch {
+    return null;
+  }
+}
+
+function toSafeLeaveTarget(
+  value: string | null,
+  appUrl: string,
+  formPath: string,
 ) {
   if (!value) {
     return null;
@@ -47,50 +151,36 @@ function toSafeLeavePath(
     return null;
   }
 
-  let pathname = "";
-  let search = "";
-
   if (trimmed.startsWith("/")) {
-    if (trimmed.startsWith("//")) {
-      return null;
-    }
-
-    try {
-      const parsed = new URL(
-        trimmed,
-        "https://intakeio.invalid",
-      );
-
-      pathname = parsed.pathname;
-      search = parsed.search;
-    } catch {
-      return null;
-    }
-  } else {
-    try {
-      const parsed = new URL(trimmed);
-      const app = new URL(appUrl);
-
-      if (parsed.origin !== app.origin) {
-        return null;
-      }
-
-      pathname = parsed.pathname;
-      search = parsed.search;
-    } catch {
-      return null;
-    }
+    return toSafeSameOriginPath(
+      trimmed,
+      appUrl,
+      formPath,
+    );
   }
 
-  const formPath =
-    `/${publicOwnerId}/form`;
+  try {
+    const parsed = new URL(trimmed);
 
-  if (
-    pathname === formPath ||
-    pathname.startsWith(`${formPath}/`)
-  ) {
+    if (
+      parsed.protocol !== "http:" &&
+      parsed.protocol !== "https:"
+    ) {
+      return null;
+    }
+
+    if (isFormPath(parsed.pathname, formPath)) {
+      return null;
+    }
+
+    const app = new URL(appUrl);
+
+    if (parsed.origin === app.origin) {
+      return `${parsed.pathname}${parsed.search}`;
+    }
+
+    return parsed.toString();
+  } catch {
     return null;
   }
-
-  return `${pathname}${search}`;
 }

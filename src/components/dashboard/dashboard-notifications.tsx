@@ -9,10 +9,13 @@ import {
   markDashboardNotificationsReadAction,
 } from "@/app/(admin)/dashboard/notification-actions";
 import type { DashboardNotification } from "@/lib/dashboard/types";
+import { useLiveDashboardNotifications } from
+  "@/lib/dashboard/use-live-notifications";
 
 type DashboardNotificationsProps = Readonly<{
   notifications: DashboardNotification[];
   errorMessage: string | null;
+  ownerUserId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }>;
@@ -59,11 +62,19 @@ function formatNotificationTime(
 }
 
 export function DashboardNotifications({
-  notifications,
+  notifications: initialNotifications,
   errorMessage,
+  ownerUserId,
   open,
   onOpenChange,
 }: DashboardNotificationsProps) {
+  const notifications =
+    useLiveDashboardNotifications(
+      initialNotifications,
+      ownerUserId,
+      !errorMessage,
+    );
+
   const [optimisticReadIds, setOptimisticReadIds] =
     useState<string[]>([]);
 

@@ -4,6 +4,7 @@ import {
   BarChart3,
   ChevronDown,
   Download,
+  FileText,
   Inbox,
   LayoutDashboard,
   LoaderCircle,
@@ -44,6 +45,7 @@ type DashboardShellProps = Readonly<{
   children: ReactNode;
   displayName: string;
   email: string;
+  ownerUserId: string;
   formPublicOwnerId: string | null;
   notifications: DashboardNotification[];
   notificationsError: string | null;
@@ -67,6 +69,12 @@ const navigationItems: NavigationItem[] = [
     label: "Contacts",
     href: "/dashboard/contacts",
     icon: UsersRound,
+    available: true,
+  },
+  {
+    label: "Proposals",
+    href: "/dashboard/proposals",
+    icon: FileText,
     available: true,
   },
   {
@@ -114,6 +122,14 @@ function getPageTitle(pathname: string) {
     )
   ) {
     return "Contacts";
+  }
+
+  if (
+    pathname.startsWith(
+      "/dashboard/proposals",
+    )
+  ) {
+    return "Proposals";
   }
 
   if (
@@ -175,6 +191,7 @@ export function DashboardShell({
   children,
   displayName,
   email,
+  ownerUserId,
   formPublicOwnerId,
   notifications,
   notificationsError,
@@ -531,6 +548,7 @@ export function DashboardShell({
                 errorMessage={
                   notificationsError
                 }
+                ownerUserId={ownerUserId}
                 open={notificationsOpen}
                 onOpenChange={(nextOpen) => {
                   setNotificationsOpen(

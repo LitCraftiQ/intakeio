@@ -9,7 +9,7 @@ import { useContactForm } from "./use-contact-form";
 
 type ContactFormProps = Readonly<{
   publicOwnerId: string;
-  leaveHref: string;
+  leaveHref: string | null;
 }>;
 
 export function ContactForm({
@@ -18,23 +18,27 @@ export function ContactForm({
 }: ContactFormProps) {
   const form = useContactForm(publicOwnerId);
 
-  if (form.submitted) {
-    return (
-      <SuccessScreen leaveHref={leaveHref} />
-    );
-  }
-
   return (
-    <form
-      onSubmit={form.onSubmit}
-      noValidate
-      className="glass-card animate-fade-up rounded-3xl p-6 sm:p-10"
-    >
-      <AboutYouSection form={form} />
-      <Divider />
-      <ProjectSection form={form} />
-      <Divider />
-      <SubmitSection form={form} />
-    </form>
+    <>
+      <form
+        onSubmit={form.onSubmit}
+        noValidate
+        className="glass-card animate-fade-up rounded-3xl p-6 sm:p-10"
+      >
+        <AboutYouSection form={form} />
+        <Divider />
+        <ProjectSection form={form} />
+        <Divider />
+        <SubmitSection form={form} />
+      </form>
+
+      {form.submitted ? (
+        <SuccessScreen
+          publicOwnerId={publicOwnerId}
+          leaveHref={leaveHref}
+          onDismiss={form.dismissSuccess}
+        />
+      ) : null}
+    </>
   );
 }

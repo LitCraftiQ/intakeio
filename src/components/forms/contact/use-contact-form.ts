@@ -137,6 +137,9 @@ export function useContactForm(
     serverError,
     update,
     onSubmit,
+    dismissSuccess() {
+      setSubmitted(false);
+    },
   };
 }
 

@@ -8,7 +8,7 @@ import { IntakeFormHeader } from
 
 type IntakeFormPageProps = Readonly<{
   publicOwnerId: string;
-  leaveHref: string;
+  leaveHref: string | null;
 }>;
 
 export function IntakeFormPage({

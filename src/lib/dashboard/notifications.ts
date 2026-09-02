@@ -46,7 +46,7 @@ function getDashboardNotificationsErrorMessage(
   code?: string,
 ) {
   if (code === "PGRST205") {
-    return "Notifications are not installed on this database yet. Run supabase/migrations/202608160003_dashboard_notifications.sql in the Supabase SQL Editor, then reload.";
+    return "Notifications are not installed on this database yet. Run supabase/migrations/202608160003_dashboard_notifications.sql, then supabase/migrations/202609020001_notifications_realtime.sql and 202609020002_notify_contact_submitted.sql in the Supabase SQL Editor, then reload.";
   }
 
   return "Unable to load notifications right now.";

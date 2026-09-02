@@ -15,10 +15,12 @@ import {
   Phone,
   Search,
   SlidersHorizontal,
+  Sparkles,
   UserRound,
   X,
   type LucideIcon,
 } from "lucide-react";
+import Link from "next/link";
 import {
   type CSSProperties,
   type KeyboardEvent,
@@ -1166,6 +1168,19 @@ export function ContactsWorkspace({
                   </p>
                 </div>
               </DrawerSection>
+
+              <Link
+                href={`/dashboard/proposals/new?contact=${encodeURIComponent(
+                  selectedContact.id,
+                )}`}
+                className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[var(--dash-accent)] px-4 text-sm font-bold text-white transition hover:brightness-110"
+              >
+                <Sparkles
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                />
+                Create proposal
+              </Link>
 
               <section className="mt-4 rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-surface)] p-4 sm:p-5">
                 <h3 className="text-sm font-bold">
