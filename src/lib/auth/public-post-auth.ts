@@ -4,6 +4,7 @@ import type {
 } from "@supabase/supabase-js";
 
 import {
+  getDisplayNameFromEmail,
   getStoredDisplayName,
   hasLinkedAuthProviders,
   isReturningAuthAccount,
@@ -26,7 +27,8 @@ export async function persistUserDisplayName(
 
   const nextName =
     preferredName?.trim() ||
-    getStoredDisplayName(user);
+    getStoredDisplayName(user) ||
+    getDisplayNameFromEmail(user.email);
 
   if (!nextName) {
     return;

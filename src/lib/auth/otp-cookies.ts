@@ -3,9 +3,6 @@ import "server-only";
 export const OTP_EMAIL_COOKIE =
   "intakeio_otp_email";
 
-export const OTP_FULL_NAME_COOKIE =
-  "intakeio_otp_full_name";
-
 export const OTP_REQUESTED_AT_COOKIE =
   "intakeio_otp_requested_at";
 

@@ -216,41 +216,7 @@
     animation: landing-node-float 12s ease-in-out infinite;
   }
   
-  .landing-colour-sync {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(7, 8, 20, 0.94) 0%,
-        rgba(7, 8, 20, 0.72) 23%,
-        rgba(9, 10, 27, 0.25) 49%,
-        rgba(8, 10, 24, 0.06) 73%,
-        rgba(8, 10, 24, 0.2) 100%
-      ),
-      linear-gradient(
-        180deg,
-        rgba(8, 9, 22, 0.12),
-        rgba(8, 9, 22, 0.08) 65%,
-        rgba(5, 6, 16, 0.58)
-      );
-    mix-blend-mode: multiply;
-  }
   
-  .landing-vignette {
-    background: radial-gradient(
-      75% 68% at 58% 48%,
-      transparent 28%,
-      rgba(5, 6, 17, 0.36) 72%,
-      rgba(4, 5, 14, 0.88) 100%
-    );
-  }
-  
-  .landing-bottom-fade {
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      rgba(5, 6, 15, 0.78)
-    );
-  }
   
   @keyframes landing-mesh-shift {
     0% {

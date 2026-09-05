@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 import {
   getOtpCookieOptions,
   OTP_EMAIL_COOKIE,
-  OTP_FULL_NAME_COOKIE,
   OTP_REQUESTED_AT_COOKIE,
 } from "@/lib/auth/otp-cookies";
 import type {
@@ -14,30 +13,13 @@ import type {
 } from "@/lib/auth/otp-action-types";
 import { createClient } from
   "@/lib/supabase/server";
-import {
-  publicEmailSchema,
-  publicFullNameSchema,
-} from "@/lib/validation/public-auth";
+import { publicEmailSchema } from
+  "@/lib/validation/public-auth";
 
 export async function requestEmailOtp(
   _previousState: RequestEmailOtpState,
   formData: FormData,
 ): Promise<RequestEmailOtpState> {
-  const fullNameResult =
-    publicFullNameSchema.safeParse(
-      formData.get("full_name"),
-    );
-
-  if (!fullNameResult.success) {
-    return {
-      status: "error",
-      message:
-        fullNameResult.error.issues[0]
-          ?.message ??
-        "Enter your first and last name.",
-    };
-  }
-
   const emailResult =
     publicEmailSchema.safeParse(
       formData.get("email"),
@@ -53,7 +35,6 @@ export async function requestEmailOtp(
     };
   }
 
-  const fullName = fullNameResult.data;
   const email = emailResult.data;
   const supabase = await createClient();
 
@@ -62,10 +43,6 @@ export async function requestEmailOtp(
       email,
       options: {
         shouldCreateUser: true,
-        data: {
-          full_name: fullName,
-          name: fullName,
-        },
       },
     });
 
@@ -91,12 +68,6 @@ export async function requestEmailOtp(
   cookieStore.set(
     OTP_EMAIL_COOKIE,
     email,
-    cookieOptions,
-  );
-
-  cookieStore.set(
-    OTP_FULL_NAME_COOKIE,
-    fullName,
     cookieOptions,
   );
 

@@ -17,7 +17,7 @@ import "./register.css";
 export const metadata: Metadata = {
   title: "Create your account",
   description:
-    "Create your secure passwordless client intake platform account.",
+    "Create your secure client intake platform account.",
 };
 
 export const dynamic = "force-dynamic";
@@ -96,12 +96,14 @@ export default async function RegisterPage({
           </Link>
 
           <div className="inline-flex items-center gap-2 text-sm font-semibold text-white">
-            <span className="grid h-9 w-9 place-items-center rounded-xl border border-white/15 bg-white/5 shadow-[0_10px_30px_-15px_rgba(124,92,255,0.8)] backdrop-blur-md">
-              <Sparkles
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/90 shadow-[0_10px_30px_-15px_rgba(124,92,255,0.8)] backdrop-blur-md">
+              {/* <Sparkles
                 className="h-4 w-4 text-violet-300"
                 aria-hidden="true"
-              />
+              /> */}
+              <img src="/favicon.png" alt="Intakeio" className="h-full w-full object-cover"/>
             </span>
+
 
             Client Intake
           </div>
@@ -117,7 +119,7 @@ export default async function RegisterPage({
                     aria-hidden="true"
                   />
 
-                  Secure passwordless access
+                  Secure access
                 </div>
 
                 <h1 className="mt-7 max-w-md text-4xl font-bold leading-tight tracking-[-0.04em] xl:text-5xl">
@@ -183,20 +185,15 @@ export default async function RegisterPage({
                       aria-hidden="true"
                     />
 
-                    Secure passwordless access
+                    Secure account access
                   </div>
                 </div>
 
-                <h2 className="mt-6 text-3xl font-bold tracking-[-0.035em] sm:text-4xl lg:mt-0">
-                  Create your account
-                </h2>
-
                 <p className="mt-3 text-sm leading-6 text-white/50 sm:text-base">
-                  Continue with your Google account. New and returning
-                  users use the same secure button.
+                  Continue with your Google account.
                 </p>
 
-                <div className="mt-8">
+                <div className="mt-6">
                   <RegistrationForm
                     errorMessage={errorMessage}
                     nextPath={nextPath}

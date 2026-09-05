@@ -109,7 +109,7 @@ export function RegistrationForm({
         <span className="h-px flex-1 bg-white/10" />
 
         <span className="text-xs uppercase tracking-[0.18em] text-white/35">
-          Passwordless
+          Account setup
         </span>
 
         <span className="h-px flex-1 bg-white/10" />
@@ -118,7 +118,7 @@ export function RegistrationForm({
       <div className="grid gap-3 text-sm text-white/55">
         <p className="flex items-start gap-2">
           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
-          No password to create, remember, or reset.
+          Create easy access account free.
         </p>
 
         <p className="flex items-start gap-2">
@@ -128,7 +128,7 @@ export function RegistrationForm({
 
         <p className="flex items-start gap-2">
           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-300" />
-          Returning users securely enter the same workspace.
+          Returning users securely enter thier workspace.
         </p>
       </div>
     </div>

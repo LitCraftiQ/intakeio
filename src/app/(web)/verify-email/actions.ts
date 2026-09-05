@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import {
   getOtpCookieOptions,
   OTP_EMAIL_COOKIE,
-  OTP_FULL_NAME_COOKIE,
   OTP_REQUESTED_AT_COOKIE,
   OTP_RESEND_SECONDS,
 } from "@/lib/auth/otp-cookies";
@@ -22,7 +21,6 @@ import { createClient } from
 import {
   emailOtpSchema,
   publicEmailSchema,
-  publicFullNameSchema,
 } from "@/lib/validation/public-auth";
 
 export async function verifyEmailOtp(
@@ -86,19 +84,9 @@ export async function verifyEmailOtp(
     };
   }
 
-  const fullNameResult =
-    publicFullNameSchema.safeParse(
-      cookieStore.get(
-        OTP_FULL_NAME_COOKIE,
-      )?.value,
-    );
-
   await persistUserDisplayName(
     supabase,
     data.user,
-    fullNameResult.success
-      ? fullNameResult.data
-      : undefined,
   );
 
   let destination:
@@ -124,12 +112,6 @@ export async function verifyEmailOtp(
 
   cookieStore.set(
     OTP_EMAIL_COOKIE,
-    "",
-    expiredCookieOptions,
-  );
-
-  cookieStore.set(
-    OTP_FULL_NAME_COOKIE,
     "",
     expiredCookieOptions,
   );
@@ -199,25 +181,12 @@ export async function resendEmailOtp(
   }
 
   const supabase = await createClient();
-  const fullNameResult =
-    publicFullNameSchema.safeParse(
-      cookieStore.get(
-        OTP_FULL_NAME_COOKIE,
-      )?.value,
-    );
 
   const { error } =
     await supabase.auth.signInWithOtp({
       email: emailResult.data,
       options: {
         shouldCreateUser: true,
-        data: fullNameResult.success
-          ? {
-              full_name:
-                fullNameResult.data,
-              name: fullNameResult.data,
-            }
-          : undefined,
       },
     });
 

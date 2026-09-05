@@ -4,17 +4,21 @@ import Link from "next/link";
 import {
   ArrowRight,
   ClipboardList,
+  Link2,
   Play,
   ShieldCheck,
   UserRound,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
   type SyntheticEvent,
 } from "react";
+import { createPortal } from "react-dom";
 
 const SCENE_DURATION = 6500;
 const ACTIVE_SCENE_COUNT = 2;
@@ -116,6 +120,30 @@ const QR_CELLS = Array.from(
   { length: 81 },
   (_, index) => ((index * 73 + 17) % 100) < 53,
 );
+
+const HOW_IT_WORKS_STEPS = [
+  {
+    title: "Create your intake page",
+    description:
+      "Set up a professional form so clients can share the details you actually need.",
+    Icon: ClipboardList,
+    iconClassName: "bg-cyan-400/15 text-cyan-200",
+  },
+  {
+    title: "Share one private link",
+    description:
+      "Send a single link. Clients submit without creating an account.",
+    Icon: Link2,
+    iconClassName: "bg-fuchsia-400/15 text-fuchsia-200",
+  },
+  {
+    title: "Review everything in one place",
+    description:
+      "Submissions land in your workspace, organized and ready to start.",
+    Icon: ShieldCheck,
+    iconClassName: "bg-emerald-400/15 text-emerald-200",
+  },
+] as const;
 
 type SceneProps = {
   active: boolean;
@@ -239,16 +267,9 @@ function ProfileScene({ active }: SceneProps) {
           </span>
         </div>
 
-        {/* i want to edit this */}
-        {/* <div className="landing-profile-stat-grid">
-          <span />
-          <span />
-          <span />
-        </div> */}
-
         <div className="relative z-[2] mt-5 flex flex-wrap gap-2">
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-medium text-white/65">
-            Contact verified
+            Project verified
           </span>
 
           <span className="rounded-full border border-emerald-300/15 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-medium text-emerald-200">
@@ -292,8 +313,8 @@ function QrScene({ active }: SceneProps) {
         "gap-3.5 sm:gap-7 lg:gap-[38px]",
       )}
     >
-      {/* <div className="landing-document-stack">
-        i want to edit this
+      <div className="landing-document-stack">
+
         <div className="landing-glass-card landing-document landing-document-one">
           <span className="landing-card-shine" />
           <span className="landing-document-icon" />
@@ -301,7 +322,6 @@ function QrScene({ active }: SceneProps) {
           <span className="landing-document-line landing-document-line-short" />
         </div>
 
-           i want to edit this
         <div className="landing-glass-card landing-document landing-document-two">
           <span className="landing-card-shine" />
           <span className="landing-document-icon" />
@@ -309,14 +329,13 @@ function QrScene({ active }: SceneProps) {
           <span className="landing-document-line landing-document-line-short" />
         </div>
            
-           i want to edit this
         <div className="landing-glass-card landing-document landing-document-three">
           <span className="landing-card-shine" />
           <span className="landing-document-icon" />
           <span className="landing-document-line landing-document-line-long" />
           <span className="landing-document-line landing-document-line-short" />
         </div>
-      </div> */}
+      </div>
 
       <div className="relative h-[245px] w-[205px] scale-[0.78] sm:h-[265px] sm:w-[235px] sm:scale-90 lg:h-[275px] lg:w-[245px] lg:scale-100">
         <DocumentCard
@@ -378,7 +397,7 @@ function QrScene({ active }: SceneProps) {
 function AnalyticsScene({ active }: SceneProps) {
   return (
     <div className={sceneClass(active)}>
-      {/* <div className="landing-glass-card landing-analytics-card">
+      <div className="landing-glass-card landing-analytics-card">
         <span className="landing-card-shine" />
 
         <div className="landing-analytics-header">
@@ -429,7 +448,7 @@ function AnalyticsScene({ active }: SceneProps) {
             />
           </svg>
         </div>
-      </div> */}
+      </div>
 
       <span className="landing-data-particle-one absolute left-[8%] top-[17%] h-2 w-2 rounded-full bg-[#76dfff] shadow-[0_0_8px_#76dfff,0_0_18px_rgba(118,223,255,0.65)]" />
 
@@ -440,9 +459,125 @@ function AnalyticsScene({ active }: SceneProps) {
   );
 }
 
+type HowItWorksModalProps = {
+  onClose: () => void;
+};
+
+function HowItWorksModal({ onClose }: HowItWorksModalProps) {
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 grid place-items-center px-4 py-8"
+      role="presentation"
+      onClick={onClose}
+    >
+      <div
+        className="absolute inset-0 bg-[#050610]/80 backdrop-blur-md"
+        aria-hidden="true"
+      />
+
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="how-it-works-title"
+        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-[#cbd0ff38] bg-[linear-gradient(145deg,rgba(30,29,71,0.92),rgba(13,18,43,0.88))] p-5 text-left shadow-[0_28px_80px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl sm:p-6"
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-200/80">
+              Client intake
+            </p>
+
+            <h2
+              id="how-it-works-title"
+              className="mt-2 text-xl font-extrabold tracking-[-0.04em] text-white [font-family:var(--font-display)] sm:text-2xl"
+            >
+              How it works
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-white/12 bg-white/5 text-white/70 transition hover:bg-white/10 hover:text-white"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+
+        <ol className="mt-5 flex flex-col gap-3">
+          {HOW_IT_WORKS_STEPS.map((step, index) => (
+            <li
+              key={step.title}
+              className="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.04] p-3.5 sm:p-4"
+            >
+              <span
+                className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${step.iconClassName}`}
+              >
+                <step.Icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-white">
+                  <span className="mr-2 text-white/35">
+                    {index + 1}.
+                  </span>
+                  {step.title}
+                </p>
+
+                <p className="mt-1 text-sm leading-6 text-white/55">
+                  {step.description}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <Link
+          href="/register"
+          className="group mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(90deg,oklch(0.68_0.2_340),oklch(0.55_0.24_292))] px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_40px_-12px_oklch(0.6_0.24_300/0.65)] transition duration-200 hover:opacity-95"
+        >
+          Create your intake page
+
+          <ArrowRight
+            className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+            aria-hidden="true"
+          />
+        </Link>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 export function LandingHero() {
   const stageRef = useRef<HTMLElement>(null);
   const [activeScene, setActiveScene] = useState(0);
+  const [howItWorksOpen, setHowItWorksOpen] = useState(false);
+  const closeHowItWorks = useCallback(() => {
+    setHowItWorksOpen(false);
+  }, []);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia(
@@ -679,37 +814,124 @@ export function LandingHero() {
       </div>
 
       <div className="landing-front-layer pointer-events-none absolute inset-0 z-[6] transition-transform duration-100">
-        <div
-          id="platform-preview"
-          className="absolute left-1/2 top-[54%] h-[430px] w-[94vw] min-w-0 -translate-x-1/2 -translate-y-1/2 scale-[0.78] opacity-30 sm:top-1/2 sm:h-[500px] sm:w-[80vw] sm:scale-90 sm:opacity-50 lg:left-auto lg:right-[5%] lg:h-[min(45vw,520px)] lg:w-[min(38vw,560px)] lg:min-w-[390px] lg:translate-x-0 lg:scale-100 lg:opacity-80 xl:right-[9%]"
-          aria-hidden="true"
-        >
-          <ProfileScene active={activeScene === 0} />
+
+      {/* =========================================================
+          DESKTOP VISUALS
+          ========================================================= */}
+      <div
+        id="platform-preview"
+        className="absolute inset-0 hidden lg:block"
+        aria-hidden="true"
+      >
+
+        {/* =======================================================
+            LEFT SIDE
+            Client details
+            Project brief
+            Secure submission
+            QR card
+            ======================================================= */}
+        <div className="absolute inset-y-0 left-[3%] w-[44%] xl:left-[5%] xl:w-[40%]">
           <QrScene active={activeScene === 1} />
+        </div>
+
+
+        {/* =======================================================
+            RIGHT SIDE
+            New client received
+            Orbit bubbles
+            Analytics
+            ======================================================= */}
+        <div className="absolute inset-y-0 right-[3%] w-[44%] xl:right-[5%] xl:w-[40%]">
+          <ProfileScene active={activeScene === 0} />
+
           <AnalyticsScene active={activeScene === 2} />
         </div>
 
-        <div
-          className="absolute inset-0 opacity-45 sm:opacity-65 lg:opacity-100"
-          aria-hidden="true"
-        >
-          {FLOATING_NODES.map((node) => (
-            <span
-              key={node.label}
-              className={`landing-node absolute h-11 w-11 place-items-center rounded-[14px] border border-white/15 bg-[linear-gradient(145deg,rgba(106,85,255,0.52),rgba(22,27,58,0.38))] text-[10px] font-extrabold tracking-[-0.02em] text-white/90 shadow-[0_14px_34px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.16),0_0_28px_rgba(107,84,255,0.25)] backdrop-blur-[13px] ${node.className}`}
-              style={{ animationDelay: node.delay }}
-            >
-              {node.label}
-            </span>
-          ))}
-        </div>
       </div>
 
-      <div className="landing-colour-sync pointer-events-none absolute inset-0 z-[8]" />
 
-      <div className="landing-vignette pointer-events-none absolute inset-0 z-[9]" />
+      {/* =========================================================
+          MOBILE + TABLET
 
-      <div className="landing-bottom-fade pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[18%]" />
+          Do NOT split the visuals on smaller screens.
+          Keep them centered.
+          ========================================================= */}
+      <div
+        className="absolute inset-x-0 top-[52%] h-[430px] -translate-y-1/2 lg:hidden"
+        aria-hidden="true"
+      >
+        <ProfileScene active={activeScene === 0} />
+
+        <QrScene active={activeScene === 1} />
+
+        <AnalyticsScene active={activeScene === 2} />
+      </div>
+
+
+      {/* =========================================================
+          FLOATING SMALL NODES
+
+          LinkedIn
+          WhatsApp
+          Email
+          AI
+          CRM
+          Check
+          Arrow
+          etc.
+
+          These stay spread around the FULL screen.
+          ========================================================= */}
+      <div
+        className="absolute inset-0 opacity-45 sm:opacity-65 lg:opacity-100"
+        aria-hidden="true"
+      >
+        {FLOATING_NODES.map((node) => (
+          <span
+            key={node.label}
+            className={`
+              landing-node
+              absolute
+              h-11
+              w-11
+              place-items-center
+              rounded-[14px]
+              border
+              border-white/15
+              bg-[linear-gradient(
+                145deg,
+                rgba(106,85,255,0.52),
+                rgba(22,27,58,0.38)
+              )]
+              text-[10px]
+              font-extrabold
+              tracking-[-0.02em]
+              text-white/90
+              shadow-[
+                0_14px_34px_rgba(0,0,0,0.32),
+                inset_0_1px_0_rgba(255,255,255,0.16),
+                0_0_28px_rgba(107,84,255,0.25)
+              ]
+              backdrop-blur-[13px]
+              ${node.className}
+            `}
+            style={{
+              animationDelay: node.delay,
+            }}
+          >
+            {node.label}
+          </span>
+        ))}
+      </div>
+
+      </div>
+
+      <div className="pointer-events-none absolute inset-0 z-[8]" />
+
+      <div className="pointer-events-none absolute inset-0 z-[9]" />
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[18%]" />
 
       <section className="relative z-20 flex min-h-[100svh] items-center justify-center px-5 py-20 text-center sm:px-6 sm:py-24">
         <div className="mx-auto flex w-full max-w-3xl flex-col items-center">
@@ -719,22 +941,54 @@ export function LandingHero() {
               aria-hidden="true"
             />
 
-            Secure client intake, simplified
+            Secure intake, simplified
           </div>
 
-          <h2 className="mt-6 text-balance text-4xl font-extrabold leading-[1.04] tracking-[-0.04em] text-white [font-family:var(--font-display)] sm:mt-7 sm:text-6xl lg:text-7xl">
-            Collect every client detail
+          <h2 className="mt-6 text-balance text-4xl font-extrabold leading-[1.08] tracking-[-0.04em] text-white [font-family:var(--font-display)] sm:mt-7 sm:text-5xl">
+            Collect every detail
 
             <span className="mt-1 block bg-[linear-gradient(90deg,oklch(0.78_0.15_220),oklch(0.68_0.21_320))] bg-clip-text text-transparent">
-              before the work begins.
+              Start every project with clarity.
             </span>
           </h2>
 
-          <p className="mt-5 max-w-2xl text-pretty text-base leading-7 text-white/65 sm:mt-6 sm:text-lg sm:leading-8">
-            Create one secure intake link, collect complete client
-            information, and keep every contact, project brief, and next
-            step organized in one workspace.
-          </p>
+          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-md">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            Your professional identity, one link
+          </div>
+
+          <div className="mt-6 w-full max-w-lg rounded-2xl border border-[#cbd0ff28] bg-[linear-gradient(145deg,rgba(30,29,71,0.46),rgba(13,18,43,0.3))] px-5 py-5 text-left shadow-[0_20px_50px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-md sm:px-6">
+            <div className="flex item-center justify-between">
+              <ul className="flex flex-col gap-3">
+                <li className="flex items-center gap-3">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-cyan-400/15 text-cyan-200">
+                    <ClipboardList className="h-4 w-4" aria-hidden="true" />
+                  </span>
+
+                  <span className="text-sm font-semibold text-cyan-100 sm:text-[15px]">
+                    Capture the information that matters
+                  </span>
+                </li>
+
+                <li className="flex items-center gap-3">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-fuchsia-400/15 text-fuchsia-200">
+                    <UserRound className="h-4 w-4" aria-hidden="true" />
+                  </span>
+
+                  <span className="text-sm font-semibold text-fuchsia-100 sm:text-[15px]">
+                    Understand what your client needs
+                  </span>
+                </li>
+              </ul>
+              <img src="/logo2.png" alt="Intakeio" className=" w-15 h-15 rounded-lg" />
+            </div>
+
+            <p className="mt-4 border-t border-white/10 pt-4 text-pretty text-sm leading-6 text-white/55 sm:text-[15px] sm:leading-7">
+              Give clients a simple way to share their information and project
+              requirements, while you keep everything organized in one private
+              workspace.
+            </p>
+          </div>
 
           <div className="mt-8 flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:mt-9 sm:w-auto sm:max-w-none sm:flex-row sm:items-center">
             <Link
@@ -749,8 +1003,11 @@ export function LandingHero() {
               />
             </Link>
 
-            <a
-              href="#platform-preview"
+            <button
+              type="button"
+              onClick={() => {
+                setHowItWorksOpen(true);
+              }}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_-18px_rgba(0,0,0,0.9)] backdrop-blur-md transition duration-200 hover:scale-[1.02] hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070814] sm:px-7 sm:text-base"
             >
               See how it works
@@ -761,14 +1018,14 @@ export function LandingHero() {
                   aria-hidden="true"
                 />
               </span>
-            </a>
+            </button>
           </div>
-
-          <p className="mt-5 text-xs text-white/40 sm:text-sm">
-            No password required. Secure passwordless access.
-          </p>
         </div>
       </section>
+
+      {howItWorksOpen ? (
+        <HowItWorksModal onClose={closeHowItWorks} />
+      ) : null}
     </main>
   );
 }

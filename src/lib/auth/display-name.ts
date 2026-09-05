@@ -38,12 +38,66 @@ function getNameFromRecord(
     .trim();
 }
 
+function getIdentityName(
+  identity: {
+    provider?: string;
+    identity_data?: Record<
+      string,
+      unknown
+    > | null;
+  },
+) {
+  return getNameFromRecord(
+    (identity.identity_data ??
+      {}) as Record<string, unknown>,
+  );
+}
+
+export function getDisplayNameFromEmail(
+  email?: string | null,
+) {
+  const localPart =
+    email?.split("@")[0]?.trim() ?? "";
+
+  if (!localPart) {
+    return "";
+  }
+
+  const withoutAlias =
+    localPart.split("+")[0] ?? localPart;
+
+  const words = withoutAlias
+    .replace(/[._-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean);
+
+  if (words.length === 0) {
+    return "";
+  }
+
+  return words
+    .map((word) => {
+      if (word.length === 1) {
+        return word.toUpperCase();
+      }
+
+      return (
+        word.charAt(0).toUpperCase() +
+        word.slice(1)
+      );
+    })
+    .join(" ");
+}
+
 export function getStoredDisplayName(user: {
   user_metadata?: Record<
     string,
     unknown
   > | null;
   identities?: Array<{
+    provider?: string;
     identity_data?: Record<
       string,
       unknown
@@ -62,14 +116,28 @@ export function getStoredDisplayName(user: {
     return fromMetadata;
   }
 
-  for (const identity of user.identities ??
-    []) {
-    const identityData =
-      (identity.identity_data ??
-        {}) as Record<string, unknown>;
+  const identities = user.identities ?? [];
+
+  for (const identity of identities) {
+    if (identity.provider !== "google") {
+      continue;
+    }
+
+    const fromGoogle =
+      getIdentityName(identity);
+
+    if (fromGoogle) {
+      return fromGoogle;
+    }
+  }
+
+  for (const identity of identities) {
+    if (identity.provider === "google") {
+      continue;
+    }
 
     const fromIdentity =
-      getNameFromRecord(identityData);
+      getIdentityName(identity);
 
     if (fromIdentity) {
       return fromIdentity;
@@ -86,6 +154,7 @@ export function getUserDisplayName(user: {
     unknown
   > | null;
   identities?: Array<{
+    provider?: string;
     identity_data?: Record<
       string,
       unknown
@@ -99,12 +168,11 @@ export function getUserDisplayName(user: {
     return storedName;
   }
 
-  const emailLocalPart =
-    user.email?.split("@")[0]?.trim() ??
-    "";
+  const fromEmail =
+    getDisplayNameFromEmail(user.email);
 
-  if (emailLocalPart) {
-    return emailLocalPart;
+  if (fromEmail) {
+    return fromEmail;
   }
 
   return "Intakeio user";
@@ -133,39 +201,13 @@ export function hasLinkedAuthProviders(user: {
 
 export function isReturningAuthAccount(user: {
   created_at: string;
+  app_metadata?: {
+    providers?: string[];
+  } | null;
   identities?: Array<{
     created_at?: string;
     provider?: string;
   }> | null;
 }) {
-  const identities = user.identities ?? [];
-
-  if (identities.length > 1) {
-    const createdTimes = identities
-      .map((identity) =>
-        identity.created_at
-          ? new Date(
-              identity.created_at,
-            ).getTime()
-          : Number.NaN,
-      )
-      .filter((value) =>
-        Number.isFinite(value),
-      );
-
-    if (createdTimes.length > 1) {
-      const oldest = Math.min(
-        ...createdTimes,
-      );
-      const newest = Math.max(
-        ...createdTimes,
-      );
-
-      if (newest - oldest > 15_000) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return hasLinkedAuthProviders(user);
 }

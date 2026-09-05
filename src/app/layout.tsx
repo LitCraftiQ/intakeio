@@ -9,7 +9,10 @@ export const metadata: Metadata = {
     template: "%s | Client Intake Platform",
   },
   description:
-    "A modern client intake platform for businesses to collect and manage client information.",
+    "A modern client intake platform for businesses to collect and manage project information and keep everything organized in workspace.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 type RootLayoutProps = Readonly<{
